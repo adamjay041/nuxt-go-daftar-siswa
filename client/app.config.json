@@ -1,0 +1,10 @@
+{
+"baseUrl": "localhost:8080",
+"defaultLangId": "EN",
+"dateFormat": "DD/MM/YYYY",
+"dateTimeFormat": "DD/MM/YYYY HH:mm",
+"timeFormat": "HH:mm",
+"decimalSeparator": ",",
+"currencySeparator": ".",
+"locale": "id-ID"
+}
