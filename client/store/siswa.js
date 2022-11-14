@@ -12,18 +12,22 @@ export const state = () => ({
     Password: "12345678"
   },
   isBusy: false,
-  titleModal: ""
+  titleModal: "",
+  role: ""
 })
 
 export const mutations = {
+  setRole: (state, value) =>{
+    state.role = value
+  },
   setListSiswa(state, value) {
-    if(value['id'] == 1) {
-      console.log('ini masuk arr', value)
-      state.listSiswa = value['data']
-    } else {
-      value.id = state.listSiswa.length +1
-      state.listSiswa.push(value['data']);
-    }
+    // if(value['id'] == 1) {
+    //   console.log('ini masuk arr', value)
+    //   state.listSiswa = value['data']
+    // } else {
+      // value.id = state.listSiswa.length +1
+      state.listSiswa = value['data'];
+    // }
   },
   setFormSubmit (state,value) {
     state.formSubmit = value
@@ -56,37 +60,37 @@ export const actions ={
 
     // token = getCookie("token")
     // console.log(token, "ININ TOKEKN")
-    get("http://localhost:8080/",{
+    get("https://daftar-mahasiswa-go.herokuapp.com/",{
       headers: {
         Authorization: 'Bearer ' + getCookie("token") //the token is a variable which holds the token
       }
     })
     .then(r => {
-      var arr = []
-      r.data.data.forEach((e,index) => {
-        console.log('ini masuk arr', e)
-        var obj = {
-          First_Name: e.first_name,
-          Last_Name: e.last_name,
-          Full_Name: e.full_name,
-          Class: e.class,
-          NPM : e.npm.replace(/ /g,''),
-          Email: e.email,
-          Id: e.id,
-          Role: e.role
-        }
-        arr.push(obj)
-      })
-      context.commit('setListSiswa', {data:arr, id: 1})
+      // var arr = []
+      // r.data.data.forEach((e,index) => {
+      //   console.log('ini masuk arr', e)
+      //   var obj = {
+      //     First_Name: e.first_name,
+      //     Last_Name: e.last_name,
+      //     Full_Name: e.full_name,
+      //     Class: e.class,
+      //     NPM : e.npm.replace(/ /g,''),
+      //     Email: e.email,
+      //     Id: e.id,
+      //     Role: e.role
+      //   }
+      //   arr.push(obj)
+      // })
+      context.commit('setListSiswa', {data:r.data.data})
     })
     .catch(err => {
-      console.log(err)
+      throw err
     })
   },
   postSiswa: function (context, value) {
     context.commit("setIsBusy", true)
     console.log(context )
-    post("http://localhost:8080/student/post", value,{
+    post("https://daftar-mahasiswa-go.herokuapp.com/student/post", value,{
       headers: {
         Authorization: 'Bearer ' + getCookie("token") //the token is a variable which holds the token
       }
@@ -97,14 +101,15 @@ export const actions ={
       context.commit("setIsBusy", false)
     })
     .catch(err => {
-      console.log(err)
-      context.commit("setIsBusy", false)
+      throw err
+      // console.log(err)
+      // context.commit("setIsBusy", false)
     })
     // .finally(e => )
   },
   deleteSiswa: function(context,id) {
     context.commit("setIsBusy", false)
-    deleted(`http://localhost:8080/student/${id}`,{
+    deleted(`https://daftar-mahasiswa-go.herokuapp.com/student/${id}`,{
       headers: {
         Authorization: 'Bearer ' + getCookie("token") //the token is a variable which holds the token
       }
@@ -120,7 +125,7 @@ export const actions ={
   },
   putSiswa: function(context, value) {
     context.commit("setIsBusy", true)
-    put(`http://localhost:8080/student/${value['id']}`, value['data'],{
+    put(`https://daftar-mahasiswa-go.herokuapp.com/student/${value['id']}`, value['data'],{
       headers: {
         Authorization: 'Bearer ' + getCookie("token") //the token is a variable which holds the token
       }
@@ -137,12 +142,13 @@ export const actions ={
   loginSiswa: function (context, value) {
     context.commit("setIsBusy", true)
     // console.log(context )
-    post("http://localhost:8080/login", value)
+    post("https://daftar-mahasiswa-go.herokuapp.com/login", value)
     .then(r => {
       toastSuccess("Login Berhasil")
       // localStorage.setItem("authToken", token)
-      console.log(getCookie('token'))
       setCookie("token", r.data.data, 60 * 4 * 1000)
+      console.log(r.data)
+      context.commit("setRole", r.data.role)
       // context.dispatch('getListSiswa')
       this.$router.push("/");
       toastSuccess()
@@ -155,7 +161,7 @@ export const actions ={
   createSiswa: function (context, value) {
     context.commit("setIsBusy", true)
     console.log(context )
-    post("http://localhost:8080/create", value)
+    post("https://daftar-mahasiswa-go.herokuapp.com/create", value)
     .then(r => {
       // context.dispatch('getListSiswa')
       context.commit("setIsBusy", false)

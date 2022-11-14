@@ -3,6 +3,7 @@ package delivery
 import (
 	"fmt"
 	"net/http"
+	"server/dto"
 	"server/helper"
 	"server/model"
 
@@ -77,17 +78,17 @@ func (e *StudentHandler) viewByName(c *gin.Context) {
 }
 
 func (e *StudentHandler) login(c *gin.Context) {
-	var login = model.Login{}
+	var login dto.Login
 	// var student = model.Student
-	var studnetReq = map[string]interface{}{}
-	err := c.Bind(&login)
+	var studnetReq dto.EditRequestStudent
+	err := c.ShouldBind(&login)
 
 	if err != nil {
 		helper.HandlerError(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
-	students, err := e.StudentUseCase.EditBy("name", login.Email, studnetReq)
+	students, err := e.StudentUseCase.EditBy("name", login.Email, &studnetReq)
 
 	// student
 
@@ -118,14 +119,14 @@ func (e *StudentHandler) login(c *gin.Context) {
 
 	// tokenString, _ := json.Marshal(helper.M{"token": signedToken})
 	// w.Write([]byte(tokenString))
-	helper.HandlerSucces(c, signedToken)
+	helper.HandlerSuccesLogin(c, signedToken, students.Role)
 	// return
 
 }
 
 func (e *StudentHandler) postStudent(c *gin.Context) {
-	var studnetReq = model.Student{}
-	err := c.Bind(&studnetReq)
+	var studnetReq dto.CreateRequestStudent
+	err := c.ShouldBind(&studnetReq)
 
 	// data := c.Request
 
@@ -141,16 +142,15 @@ func (e *StudentHandler) postStudent(c *gin.Context) {
 		return
 	}
 
-	if studnetReq.FirstName == "" && studnetReq.LastName == "" {
-		helper.HandlerError(c, http.StatusBadGateway, "first name and last name cannot be null")
+	if studnetReq.Name == "" {
+		helper.HandlerError(c, http.StatusBadGateway, "name cannot be null")
 		return
 	}
-
-	studnetReq.Role = "student"
 
 	newStudent, err := e.StudentUseCase.Create(&studnetReq)
 
 	if err != nil {
+
 		helper.HandlerError(c, http.StatusBadRequest, err.Error())
 		return
 	}
@@ -160,17 +160,18 @@ func (e *StudentHandler) postStudent(c *gin.Context) {
 
 func (e *StudentHandler) EditBy(c *gin.Context) {
 	params := c.Param("id")
-	var studnetReq = map[string]interface{}{}
+	var studnetReq dto.EditRequestStudent
 	err := c.Bind(&studnetReq)
 
 	if err != nil {
 		helper.HandlerError(c, http.StatusBadRequest, "id has be number")
 		return
 	}
-	teacher, err := e.StudentUseCase.EditBy("id", params, studnetReq)
+	teacher, errs := e.StudentUseCase.EditBy("id", params, &studnetReq)
 
-	if err != nil {
-		helper.HandlerError(c, http.StatusInternalServerError, err.Error())
+	if errs != nil {
+		fmt.Println("ini value", errs)
+		helper.HandlerError(c, http.StatusInternalServerError, errs.Error())
 		return
 	}
 
@@ -182,15 +183,14 @@ func (e *StudentHandler) EditBy(c *gin.Context) {
 func (e *StudentHandler) DeleteBy(c *gin.Context) {
 	param := c.Param("id")
 
-	student, err := e.StudentUseCase.DeleteBy(param)
+	_, err := e.StudentUseCase.DeleteBy(param)
 
 	if err != nil {
 		helper.HandlerError(c, http.StatusBadRequest, err.Error())
+		return
+
 	}
 
-	if student.DeletedAt != nil {
-		helper.HandlerError(c, 400, "data is already deleted")
-	} else {
-		helper.HandlerSucces(c, "Delete Success")
-	}
+	helper.HandlerSucces(c, "Delete Success")
+
 }

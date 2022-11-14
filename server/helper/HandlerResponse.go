@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"fmt"
 	"net/http"
 	"server/model"
 	"strconv"
@@ -14,6 +15,21 @@ func HandlerSucces(c *gin.Context, data interface{}) {
 		Message: "Success",
 		Data:    data,
 	}
+
+	fmt.Print("ini errornya " + "asasa")
+
+	c.JSON(http.StatusOK, response)
+}
+
+func HandlerSuccesLogin(c *gin.Context, data interface{}, role string) {
+	response := model.ResponHandler{
+		Status:  "200",
+		Message: "Success",
+		Data:    data,
+		Role:    role,
+	}
+
+	fmt.Print("ini errornya " + "asasa")
 
 	c.JSON(http.StatusOK, response)
 }

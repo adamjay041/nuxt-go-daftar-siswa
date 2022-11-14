@@ -28,13 +28,13 @@
             label="First Name"
             label-for="First_name-input"
             invalid-feedback="First_Name is required"
-            :state="formState.first_name"
+            :state="first_name"
             :aria-hidden="busy ? 'true' : null"
           >
             <b-form-input
               id="First_name-input"
               v-model="formSubmit.First_Name"
-              :state="formState.first_name"
+              :state="first_name"
               required
             ></b-form-input>
           </b-form-group>
@@ -42,12 +42,12 @@
             label="Last Name"
             label-for="Last_name-input"
             invalid-feedback="Last_Name is required"
-            :state="formState.last_name"
+            :state="last_name"
           >
             <b-form-input
               id="Last_name-input"
               v-model="formSubmit.Last_Name"
-              :state="formState.last_name"
+              :state="last_name"
               vale
               required
             ></b-form-input>
@@ -56,13 +56,13 @@
             label="Full Name"
             label-for="Full_name-input"
             invalid-feedback="Full_Name is required"
-            :state="formState.full_name"
+            :state="full_name"
           >
             <b-form-input
               readonly
               id="name-input"
               v-model="formSubmit.Full_Name"
-              :state="formState.full_name"
+              :state="full_name"
               required
             ></b-form-input>
           </b-form-group>
@@ -70,56 +70,57 @@
             label="Kelas"
             label-for="Kelas-input"
             invalid-feedback="Kelas is required"
-            :state="formState.kelas"
+            :state="kelas"
           >
-            <b-form-input
+            <b-form-select
               id="Kelas-input"
               v-model="formSubmit.Class"
-              :state="formState.kelas"
+              :state="kelas"
+              :options="options"
               required
-            ></b-form-input>
+            ></b-form-select>
           </b-form-group>
           <b-form-group
             label="NPM"
-            label-for="npm-input"
+            label-for="npm input"
             invalid-feedback="npm is required"
-            :state="formState.npm"
+            :state="npm"
           >
             <b-form-input
               id="npm-input"
               v-model="formSubmit.NPM"
-              :state="formState.npm"
+              :state="npm"
               required
+              @blur="validateNpm"
             ></b-form-input>
+            <!-- <span class="floating-placeholder" v-if="msg.email">{{msg.email}}</span> -->
           </b-form-group>
           <b-form-group
             label="Email"
             label-for="email-input"
             invalid-feedback="email is required"
-            :state="formState.email"
+            :state="email"
           >
             <b-form-input
-            type="email"
               id="email-input"
+              type="email"
               v-model="formSubmit.Email"
-              :state="formState.email"
+              :state="email"
               required
             ></b-form-input>
           </b-form-group>
-          <!-- <div v-if="titleM != 'Edit Data Mahasiswa'"> -->
-            <b-form-group
-              label="password"
-              label-for="password-input"
-              invalid-feedback="password is required"
-            >
-              <b-form-input
-                id="password-input"
-                v-model="formSubmit.Password"
-                required
-                type="password"
-              ></b-form-input>
-            </b-form-group>
-          <!-- </div> -->
+          <b-form-group
+            label="password"
+            label-for="password-input"
+            invalid-feedback="password is required"
+          >
+            <b-form-input
+              id="password-input"
+              v-model="formSubmit.Password"
+              required
+              type="password"
+            ></b-form-input>
+          </b-form-group>
 
       </form>
       <b-button class="mt-2" variant="outline-primary" block @click="onClick" :disabled="busy">Submit</b-button>
@@ -137,35 +138,43 @@ export default {
   data() {
     return {
       timeout: null,
+      msg: [],
+      options: [
+        {value: "S3N", text: "S3N"},
+        {value: "S2N", text: "S2N"},
+        {value: "S1N", text: "S1N"}
+      ],
       formSubmit: {
         First_Name: "",
         Last_Name: "",
         Full_Name: "",
         Class: "",
-        NPM :0,
+        NPM : "",
         Email: "",
         Password: ""
       },
       title : "",
-      formState: {
-        first_nameState: null,
-        last_nameState: null,
-        full_nameState: null,
-        kelasState: null,
-        npmState: null,
-        emailState: null
-      },
+      // formState: {
+        first_name: null,
+        last_name: null,
+        full_name: null,
+        kelas: null,
+        npm: null,
+        email: null,
+      // },
       submittedNames: []
     }
   },
   methods: {
     checkFormValidity() {
       const valid = this.$refs.form.checkValidity()
-      this.formState.first_nameState = valid
-      this.formState.last_nameState = valid
-      this.formState.full_nameState = valid
-      this.formState.kelasState = valid
-      this.formState.npmState = valid
+      console.log("ini valid", valid)
+      this.first_name = valid
+      this.last_name = valid
+      this.full_name = valid
+      this.kelas = valid
+      this.npm = valid
+      this.email = valid
       return valid
     },
     resetModal() {
@@ -184,7 +193,7 @@ export default {
           Last_Name: "",
           Full_Name: "",
           Class: "",
-          NPM :0,
+          NPM :"",
           Email: ""
         }
       }
@@ -194,17 +203,11 @@ export default {
       if (!this.checkFormValidity()) {
         return false
       }
-      console.log("titel",this.titleM )
-      // Push the name to submitted names
-      // Hide the modal manually
       if(this.titleM == "Tambah Daftar Mahasiswa") {
         this.$store.dispatch("siswa/postSiswa", this.formSubmit)
-        // if (this.busy == false) {
         this.$nextTick(() => {
           this.$bvModal.hide('modal-prevent-closing')
         })
-        // }
-        // this.$store.commit("siswa/setFormSubmitDefault")
       }
       else if (this.titleM == "Edit Data Mahasiswa") {
         var obj = {
@@ -212,7 +215,6 @@ export default {
           "data": this.formSubmit
         }
         this.$store.dispatch("siswa/putSiswa", obj)
-        // if (this.busy == false) {
         this.$nextTick(() => {
           this.$bvModal.hide('modal-prevent-closing')
         })
@@ -224,36 +226,24 @@ export default {
           this.$bvModal.hide('modal-prevent-closing')
         })
       }
-
-      // this.setTimeout(() => {
-      //   this.busy = false
-      //   this.$store.commit("siswa/setFormSubmitDefault")
-
-
-      // })
     },
-    clearTimeout() {
-      if (this.timeout) {
-        clearTimeout(this.timeout)
-        this.timeout = null
+    onClick(e) {
+        e.preventDefault()
+        // alert(JSON.stringify(this.form))
+      // this.busy = true
+      // Simulate an async request
+        this.handleSubmit()
+    },
+    validateNpm(e) {
+      if(this.formSubmit.NPM.length < 14) {
+        console.log('ini diaaa')
+        // msg['email'] = "panjang npm harus kurang dari 14"
       }
-    },
-    setTimeout(callback) {
-      this.clearTimeout()
-      this.timeout = setTimeout(() => {
-        this.clearTimeout()
-        callback()
-      }, 1000)
     },
     onHidden() {
       // Return focus to the button
       // this.$refs.button.focus()
-    },
-    onClick() {
-      // this.busy = true
-      // Simulate an async request
-      this.handleSubmit()
-    },
+    }
   },
   computed: {
     titleM() {
@@ -261,6 +251,9 @@ export default {
     },
     busy() {
       return this.$store.state.siswa.isBusy
+    },
+    validation(val) {
+      return this.formSubmit[val] != undefined || this.formSubmit[val] == ""
     }
   },
   watch:  {
@@ -270,10 +263,7 @@ export default {
     'formSubmit.Last_Name'(newF, oldF) {
       this.formSubmit.Full_Name = this.formSubmit.First_Name + " " + newF
     }
-  },
-  beforeDestroy() {
-    this.clearTimeout()
-  },
+  }
 }
 </script>
 

@@ -1,15 +1,17 @@
 <template>
+<div class="content-center">
   <div class="auth-box">
     <div>
       <form>
         <div class="text-center">
-          <h3>Sign In</h3>
+
           <img
-            style="width: 300px; margin: 1px"
-            src="https://unindra.ac.id/assets/front/img/header_logo_16462082631435350658.png"
+            style="width: 110px; margin: 20px"
+            src="https://lms.unindra.ac.id/media_public/get_gambar/d2llSWJaazRBRUtSZ2lFQm15V3RiZi9GV3oyd09zSGdTdXlOVjVyR0Zsc20yWkxNc3J4dUNFdi9MbENKd2ZYSg=="
+            width="80"
             class="center"
           />
-
+           <h3>Sign In</h3>
           <p class="text-muted">Enter your Email and password</p>
         </div>
 
@@ -18,7 +20,8 @@
         </b-alert>
         <div class="form-group py-3 m-0 has-success">
           <input
-            require
+            required
+            validated="true"
             v-model="model.email"
             type="text"
             name="email"
@@ -29,7 +32,7 @@
 
         <div class="form-group py-3 m-0 has-invalid">
           <input
-            require
+            required
             password="password"
             v-model="model.password"
             type="password"
@@ -41,7 +44,7 @@
 
         <button
           type="submit"
-          class="btn btn-block btn-lg btn-success"
+          class="btn btn-block btn-lg btn-primary"
           @click="signIn"
         >
           <a>Login</a>
@@ -67,9 +70,8 @@
       </form>
       <loading v-if="isLoading" />
     </div>
-    <!-- <modal-form :dataEdit="editData" :id="id"></modal-form> -->
   </div>
-
+</div>
 </template>
 
 <script>
@@ -78,8 +80,6 @@ export default {
   name: "Login",
   components: { modalForm },
   data() {
-
-
     return {
       isAuthenticationFail: false,
       isLoading: false,
@@ -94,7 +94,13 @@ export default {
   methods: {
     signIn (e){
        e.preventDefault();
-       this.$store.dispatch("siswa/loginSiswa", this.model)
+       this.isAuthenticationFail = false;
+      try {
+        this.$store.dispatch("siswa/loginSiswa", this.model)
+         this.isAuthenticationFail = false;
+       } catch (error) {
+         this.isAuthenticationFail = true;
+       }
       // this.isLoading = true
       // this.isLoading = false
     },
@@ -107,17 +113,41 @@ export default {
 </script>
 
 <style lang="scss">
+
+
+.content-center {
+  height: 100%;
+  display: flex;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  background-image: url("https://lms.unindra.ac.id/assets/template/login_colek/images/img-wayang.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#__nuxt {
+  height: 100%;
+}
+
+#__layout {
+  height: 100%;
+}
+
+
 .auth-box {
   width: 450px;
-  margin: auto;
-  justify-content: center;
-  align-items: center;
+  // height: 100%;
+  // margin: auto;
+  // justify-content: center;
+  // align-items: center;
   // height: 80vh;
   background: #fff;
   padding: 50px;
   border-radius: 12px;
-  margin-top: 100px;
-  padding-bottom: 25px;
+  // margin-top: 100px;
+  // padding-bottom: 25px;
 }
 .text-dark-50 {
   color: #7e8299!important;

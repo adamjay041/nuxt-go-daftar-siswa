@@ -1,7 +1,7 @@
 <template>
   <div>
-    <b-navbar toggleable="sm" type="light" variant="white" class="bd-navbar">
-      <b-navbar-toggle target="nav-text-collapse"></b-navbar-toggle>
+    <b-navbar toggleable="sm" type="light" variant="white" class="bd-navbar" sticky>
+      <!-- <b-navbar-toggle target="nav-text-collapse"></b-navbar-toggle> -->
       <b-navbar-brand>
         <img src="https://unindra.ac.id/assets/front/img/header_logo_16462082631435350658.png" alt="Kitten" >
       </b-navbar-brand>
@@ -11,8 +11,8 @@
         </b-navbar-nav>
       </b-collapse>
       <b-nav-form>
-        <b-button size="md"  class="mr-1" variant="danger" @click="logout">
-          Logout
+        <b-button size="md" class="mr-1" variant="outline-danger" @click="logout">
+          Logout  <font-awesome-icon :icon="['fas', 'arrow-right-from-bracket']" />
         </b-button>
       </b-nav-form>
     </b-navbar>

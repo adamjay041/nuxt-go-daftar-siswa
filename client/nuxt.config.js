@@ -13,11 +13,11 @@ export default {
       { hid: "description", name: "description", content: "" },
       { name: "format-detection", content: "telephone=no" },
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "https://unindra.ac.id/assets/front/img/header_logo_16462082631435350658.png" }],
+    link: [{ rel: "icon", type: "image/x-icon", href: "https://lms.unindra.ac.id/media_public/get_gambar/d2llSWJaazRBRUtSZ2lFQm15V3RiZi9GV3oyd09zSGdTdXlOVjVyR0Zsc20yWkxNc3J4dUNFdi9MbENKd2ZYSg==" }],
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
-  css: ["@/assets/app.scss"],
+  css: ["@/assets/app.scss",'@fortawesome/fontawesome-svg-core/styles.css'],
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: ["@/plugins/axios", "@/plugins/vendor"],
 
@@ -38,6 +38,7 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/bootstrap
     "bootstrap-vue/nuxt",
+    // '@nuxtjs/fontawesome',
   ],
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

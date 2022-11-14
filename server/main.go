@@ -1,15 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"log"
-	"server/config"
 	"time"
 
+	"server/config"
 	_middleware "server/helper"
 	_Studenthandler "server/section/student/delivery"
 	_studentRepo "server/section/student/repository"
 	_studentUseCase "server/section/student/usecase"
 
+	// "github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin"
 	jwt "github.com/golang-jwt/jwt/v4"
 )
@@ -32,7 +34,12 @@ func main() {
 	// port := "7861"
 
 	db := config.DbConnect()
-	defer db.Close()
+
+	check := config.CheckTable(db)
+
+	if check {
+		fmt.Println("Table Already Exists")
+	}
 
 	router := gin.Default()
 
@@ -48,6 +55,7 @@ func main() {
 	// //this for connect to usecase to delivery section trhow data to api
 	_Studenthandler.NewStudentHandler(router, studentUseCase)
 
+	// port := os.Getenv("PORT")
 	err := router.Run()
 	if err != nil {
 		log.Fatal(err.Error())
